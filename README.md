@@ -14,10 +14,10 @@ npm run check
 npm run build
 npm start
 
-Для production нужен Node-сервер, HTTPS и SITE_ORIGIN в .env.
+Локальный Node-сервер запускается через scripts/dev-server.mjs. Для собственного Node-хостинга нужны HTTPS и SITE_ORIGIN в .env.
 HOST=0.0.0.0 указывайте, если этого требует хостинг.
-dist содержит статические файлы сайта; /api/config обслуживается сервером.
-Публичная публикация и push в GitHub не выполнены.
+На Vercel dist отдаётся как статический сайт, а /api/config работает как отдельная Vercel Function из api/config.js. При локальном запуске этот endpoint обслуживает dev-server.
+GitHub подключён к проекту Vercel visaalmaztourkz. Production-ветка: codex/visa-website. Публикация обновляется после push в эту ветку.
 
 ## Форма и WhatsApp
 Основной номер: +7 706 406 0101. Дополнительный: +7 701 888 7932.
@@ -72,3 +72,6 @@ motion.mjs управляет плавной прокруткой, появле�
 
 Цены, часы работы и показатели одобрения не добавлены: они не подтверждены.
 Перед публичным запуском согласовать реквизиты компании, домен, тексты и настройки сервисов.
+
+## Конфигурация Vercel
+vercel.json явно задаёт framework: null, npm run build и outputDirectory: dist. Браузерный entrypoint называется client.mjs. Локальный сервер находится в scripts/, чтобы Vercel не распознавал браузерный app.mjs или локальный server.mjs как production-сервер. Веб-обработчик api/config.js возвращает только публичный ключ карты; токены WhatsApp в ответ не попадают.

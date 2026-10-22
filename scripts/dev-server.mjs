@@ -3,8 +3,9 @@ import { readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import { validateLead, sendLead } from './whatsapp.mjs';
-const projectRoot=fileURLToPath(new URL('.',import.meta.url));
+import { validateLead, sendLead } from '../whatsapp.mjs';
+import { publicConfig } from '../public-config.mjs';
+const projectRoot=fileURLToPath(new URL('../',import.meta.url));
 try{process.loadEnvFile(path.join(projectRoot,'.env'));}catch(error){if(error.code!=='ENOENT')throw error;}
 const mime={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.png':'image/png','.jpg':'image/jpeg'};
 export function createApp({env=process.env,fetcher=fetch,root=projectRoot}={}) {
@@ -15,7 +16,7 @@ export function createApp({env=process.env,fetcher=fetch,root=projectRoot}={}) {
   res.setHeader('Permissions-Policy','camera=(), microphone=(), geolocation=()');
   const json=(status,data)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify(data));};
   let pathname; try{pathname=new URL(req.url,'http://localhost').pathname;}catch{return json(400,{error:'Неверный адрес.'});}
-  if(pathname==='/api/config' && req.method==='GET')return json(200,{googleMapsKey:env.GOOGLE_MAPS_API_KEY||''});
+  if(pathname==='/api/config' && req.method==='GET')return json(200,publicConfig(env));
   if(pathname==='/api/consultation'){
    if(req.method!=='POST'){res.setHeader('Allow','POST');return json(405,{ok:false,error:'Метод не поддерживается.'});}
    const expected=env.SITE_ORIGIN || 'http://' + req.headers.host;
@@ -43,7 +44,7 @@ export function createApp({env=process.env,fetcher=fetch,root=projectRoot}={}) {
   let relative;
   try{relative=decodeURIComponent(pathname);}catch{return json(400,{error:'Неверный адрес.'});}
   if(relative==='/')relative='/index.html';
-  if(!/^\/(index\.html|styles\.css|app\.mjs|contact\.mjs|motion\.mjs|assets\/(?:[a-z0-9-]+\.(?:png|jpg)|lenis\.(?:mjs|css)))$/.test(relative))return json(404,{error:'Страница не найдена.'});
+  if(!/^\/(index\.html|styles\.css|client\.mjs|contact\.mjs|motion\.mjs|assets\/(?:[a-z0-9-]+\.(?:png|jpg)|lenis\.(?:mjs|css)))$/.test(relative))return json(404,{error:'Страница не найдена.'});
   try{
    const body=await readFile(path.join(root,relative.slice(1)));
    res.writeHead(200,{'Content-Type':mime[path.extname(relative)]||'application/octet-stream','Cache-Control':'no-cache'});

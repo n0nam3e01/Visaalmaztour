@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createApp } from '../server.mjs';
+import { createApp } from '../scripts/dev-server.mjs';
 const lead={name:'Тестовый клиент',phone:'+77061234567',destination:'США',consent:true};
 async function fixture(t,options={}) {
  const server=createApp({env:{},...options});
@@ -71,7 +71,7 @@ test('Cyrillic survives a multibyte character split across request chunks',async
 });
 test('browser motion dependencies are served with correct content types',async t=>{
  const {base}=await fixture(t);
- for(const [route,mime] of [['/motion.mjs','text/javascript'],['/assets/lenis.mjs','text/javascript'],['/assets/lenis.css','text/css']]){
+ for(const [route,mime] of [['/client.mjs','text/javascript'],['/motion.mjs','text/javascript'],['/assets/lenis.mjs','text/javascript'],['/assets/lenis.css','text/css']]){
   const response=await fetch(base+route);
   assert.equal(response.status,200,route);
   assert.ok(response.headers.get('content-type').startsWith(mime),route);
