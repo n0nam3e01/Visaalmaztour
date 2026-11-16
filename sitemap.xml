@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://visaalmaztourkz.vercel.app/</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://visaalmaztourkz.vercel.app/"/>
+    <xhtml:link rel="alternate" hreflang="kk" href="https://visaalmaztourkz.vercel.app/kk/"/>
+  </url>
+  <url>
+    <loc>https://visaalmaztourkz.vercel.app/kk/</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://visaalmaztourkz.vercel.app/"/>
+    <xhtml:link rel="alternate" hreflang="kk" href="https://visaalmaztourkz.vercel.app/kk/"/>
+  </url>
+</urlset>

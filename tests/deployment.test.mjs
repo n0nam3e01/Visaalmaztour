@@ -15,9 +15,9 @@ test('production output contains all browser modules referenced by the page',asy
  execFileSync(process.execPath,['scripts/build.mjs'],{cwd:root});
  const html=await readFile(new URL('../dist/index.html',import.meta.url),'utf8');
  assert.match(html,/src="\/client\.mjs"/);
- for(const name of ['client.mjs','contact.mjs','motion.mjs','styles.css','assets/lenis.mjs','assets/lenis.css'])
+ for(const name of ['client.mjs','contact.mjs','motion.mjs','styles.css','assets/lenis.mjs','assets/lenis.css','kk/index.html','404.html','robots.txt','sitemap.xml'])
  await access(new URL('../dist/'+name,import.meta.url));
- for(const name of ['server.mjs','app.mjs','whatsapp.mjs','.env'])await assert.rejects(access(new URL('../dist/'+name,import.meta.url)));
+ for(const name of ['server.mjs','app.mjs','whatsapp.mjs','.env','i18n/kk.mjs','assets/logo.png'])await assert.rejects(access(new URL('../dist/'+name,import.meta.url)));
 });
 test('serverless map config only exposes the public browser key',async()=>{
  const { publicConfig }=await import('../public-config.mjs');

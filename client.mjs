@@ -3,7 +3,29 @@ import { createMotion } from './motion.mjs';
 
 const $ = selector => document.querySelector(selector);
 const motion = createMotion();
-const countryData = {
+const lang = document.documentElement.lang === 'kk' ? 'kk' : 'ru';
+const ui = {
+  ru: { openMenu: 'Открыть меню', closeMenu: 'Закрыть меню', visa: 'Виза: ', name: 'Меня зовут ', nameRequired: 'Введите имя, чтобы мы знали, как к вам обращаться.' },
+  kk: { openMenu: 'Мәзірді ашу', closeMenu: 'Мәзірді жабу', visa: 'Виза: ', name: 'Менің атым ', nameRequired: 'Сізге қалай жүгінетінімізді білу үшін атыңызды енгізіңіз.' },
+}[lang];
+const countryDataKk = {
+  schengen: {
+    label: 'Шенген', eyebrow: 'Еуропаға сапарлар',
+    description: 'Қай елдерге және қандай мақсатпен баратыныңызды айтыңыз. Шенген визасына өтінім беру үшін құжаттарды дайындауға көмектесеміз.',
+    services: ['Сапарыңызға қажет құжаттар тізімін жасаймыз', 'Сауалнаманы толтыруға көмектесеміз', 'Тапсыру алдында деректер мен құжаттар жинағын тексереміз', 'Келесі қадамдарды түсіндіреміз'],
+  },
+  usa: {
+    label: 'АҚШ', eyebrow: 'АҚШ-қа сапарлар',
+    description: 'Сапар мақсаты мен жағдайыңызды талдаймыз. DS-160 сауалнамасын толтыруға және сұхбатқа дайындалуға көмектесеміз.',
+    services: ['Жоспарыңыз бен визалық тарихыңызды талқылаймыз', 'DS-160 толтыруға көмектесеміз', 'Деректердің дұрыстығын тексереміз', 'Тапсыру кезеңдері мен сұхбатқа дайындаймыз'],
+  },
+  japan: {
+    label: 'Жапония', eyebrow: 'Жапонияға сапарлар',
+    description: 'Жеке және топтық сапарлар үшін құжаттарға көмектесеміз. Жоспарыңызды нақтылап, тапсыру тәртібін түсіндіреміз.',
+    services: ['Сапарды және өтініш берушілер құрамын талқылаймыз', 'Құжаттарды жинауға көмектесеміз', 'Сауалнама мен деректерді тексереміз', 'Тапсыру алдындағы сұрақтарға жауап береміз'],
+  },
+};
+const countryDataRu = {
   schengen: {
     label: 'Шенген', eyebrow: 'Поездки в Европу',
     description: 'Расскажите, в какие страны едете и с какой целью. Поможем подготовить документы для вашей подачи на шенгенскую визу.',
@@ -20,18 +42,19 @@ const countryData = {
     services: ['Обсудим поездку и состав заявителей', 'Поможем собрать документы', 'Проверим анкету и данные', 'Ответим на вопросы перед подачей'],
   },
 };
+const countryData = lang === 'kk' ? countryDataKk : countryDataRu;
 
 const menuButton = $('.menu-toggle');
 const menu = $('#navigation');
 function closeMenu() {
   menu.classList.remove('open');
   menuButton.setAttribute('aria-expanded', 'false');
-  menuButton.setAttribute('aria-label', 'Открыть меню');
+  menuButton.setAttribute('aria-label', ui.openMenu);
 }
 menuButton.addEventListener('click', event => {
   const open = menuButton.getAttribute('aria-expanded') !== 'true';
   menuButton.setAttribute('aria-expanded', String(open));
-  menuButton.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
+  menuButton.setAttribute('aria-label', open ? ui.closeMenu : ui.openMenu);
   menu.classList.toggle('open', open);
   if (open && event.detail !== 0 && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     menu.animate([{ opacity: 0, transform: 'translateY(-5px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 180, easing: 'cubic-bezier(.23,1,.32,1)' });
@@ -71,13 +94,13 @@ new ResizeObserver(() => { if (activeLink) positionPill(activeLink); }).observe(
 const countryDialog = $('#country-dialog');
 document.querySelectorAll('[data-country]').forEach(button => button.addEventListener('click', event => {
   const data = countryData[button.dataset.country];
-  $('#country-title').textContent = 'Виза: ' + data.label;
+  $('#country-title').textContent = ui.visa + data.label;
   $('#country-eyebrow').textContent = data.eyebrow;
   $('#country-description').textContent = data.description;
   $('#country-services').replaceChildren(...data.services.map(text => {
     const li = document.createElement('li'); li.textContent = text; return li;
   }));
-  $('#country-cta').href = consultationUrl(data.label);
+  $('#country-cta').href = consultationUrl(data.label, '', lang);
   motion.openDialog(countryDialog, event);
 }));
 document.querySelectorAll('dialog').forEach(dialog => {
@@ -90,7 +113,7 @@ document.querySelectorAll('dialog').forEach(dialog => {
   });
 });
 document.querySelectorAll('.privacy-open').forEach(button => button.addEventListener('click', event => motion.openDialog($('#privacy-dialog'), event)));
-document.querySelectorAll('[data-whatsapp]').forEach(link => { link.href = consultationUrl(); });
+document.querySelectorAll('[data-whatsapp]').forEach(link => { link.href = consultationUrl('', '', lang); });
 
 const form = $('#lead-form');
 const nameInput = $('#client-name');
@@ -99,8 +122,8 @@ const messageInput = $('#whatsapp-message');
 function updateDraft() {
   nameInput.setCustomValidity('');
   const name = nameInput.value.trim();
-  const details = name ? 'Меня зовут ' + name + '.' : '';
-  messageInput.value = new URL(consultationUrl(destinationInput.value === 'Пока выбираю' ? '' : destinationInput.value, details)).searchParams.get('text');
+  const details = name ? ui.name + name + '.' : '';
+  messageInput.value = new URL(consultationUrl(destinationInput.value, details, lang)).searchParams.get('text');
 }
 nameInput.addEventListener('input', updateDraft);
 destinationInput.addEventListener('change', updateDraft);
@@ -108,12 +131,12 @@ form.addEventListener('submit', event => {
   updateDraft();
   if (nameInput.value.trim().length < 2) {
     event.preventDefault();
-    nameInput.setCustomValidity('Введите имя, чтобы мы знали, как к вам обращаться.');
+    nameInput.setCustomValidity(ui.nameRequired);
     nameInput.reportValidity();
   }
 });
 $('#quick-consult').addEventListener('click', event => {
-  destinationInput.value = $('#quick-destination').value || 'Пока выбираю';
+  destinationInput.value = $('#quick-destination').value;
   updateDraft();
   motion.scrollTo($('#consultation'), { instant: event.detail === 0, onComplete: () => nameInput.focus({ preventScroll: true }) });
 });

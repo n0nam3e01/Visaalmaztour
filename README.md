@@ -19,6 +19,18 @@ HOST=0.0.0.0 указывайте, если этого требует хости
 На Vercel dist отдаётся как статический сайт, а /api/config работает как отдельная Vercel Function из api/config.js. При локальном запуске этот endpoint обслуживает dev-server.
 GitHub подключён к проекту Vercel visaalmaztourkz. Production-ветка: codex/visa-website. Публикация обновляется после push в эту ветку.
 
+## Казахская версия
+Русская страница — index.html, казахская доступна по адресу /kk/. Отдельного HTML-файла у неё нет: перевод хранится в i18n/kk.mjs парами «фрагмент index.html → казахский текст».
+npm run build собирает dist/kk/index.html, локальный сервер отдаёт /kk/ на лету. Тексты, которые подставляет скрипт (окна направлений, черновик WhatsApp), лежат в client.mjs и contact.mjs.
+При правке русского текста в index.html обновите ту же строку в i18n/kk.mjs: тест tests/i18n.test.mjs падает, если фрагмент больше не найден.
+Перевод сделан без носителя языка, перед продвижением его стоит вычитать.
+
+## Изображения и SEO
+Фото хранятся в WebP в двух размерах (srcset), логотип — assets/logo.webp, превью для мессенджеров — assets/og.jpg, иконка — assets/favicon.svg.
+Картинки в /assets кэшируются на 30 дней (vercel.json). Если заменяете картинку, дайте файлу новое имя.
+Адрес сайта https://visaalmaztourkz.vercel.app прописан в index.html (canonical, og, JSON-LD), i18n/kk.mjs, robots.txt и sitemap.xml. При переезде на свой домен замените его во всех четырёх файлах.
+Тесты запускаются в GitHub Actions при каждом push (.github/workflows/test.yml).
+
 ## Форма и WhatsApp
 Основной номер: +7 706 406 0101. Дополнительный: +7 701 888 7932.
 Форма запрашивает имя и направление. Поля телефона нет.
@@ -66,7 +78,7 @@ motion.mjs управляет плавной прокруткой, появле�
 Анимации и взаимодействия: https://github.com/emilkowalski/skills/blob/main/skills/emil-design-eng/SKILL.md
 Навыки прочитаны из оригинальных источников, глобально не устанавливались.
 
-Логотип, Греция и Испания взяты из основного проекта.
+Логотип, Греция и Испания взяты из основного проекта. Исходные JPEG/PNG остались в истории git.
 Япония: https://images.unsplash.com/photo-1624253346805-df69ad2b3d7f (Kyoto, Unsplash).
 США: NIR HIMI, https://unsplash.com/photos/empire-state-building-in-new-york-city-skyline-tKF8eYC4dK0 (Unsplash License).
 

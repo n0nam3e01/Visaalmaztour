@@ -65,6 +65,7 @@ h3 { font-size: 1.18rem; font-weight: 800; line-height: 1.3; letter-spacing: -.0
 .brand > span { max-width: 70px; padding-left: 13px; border-left: 1px solid var(--border); font-size: 11px; line-height: 1.5; font-weight: 650; }
 .header-actions { display: flex; align-items: center; gap: 16px; flex: none; }
 .header-phone { white-space: nowrap; font-size: 14px; font-weight: 700; }
+.lang-switch { display: inline-grid; place-items: center; min-width: 46px; min-height: 40px; padding: 0 10px; border: 1px solid var(--border); border-radius: 12px; background: white; font-size: 12px; font-weight: 800; letter-spacing: .04em; transition: border-color 160ms ease, background-color 160ms ease; }
 .header-consult { font-size: 13px; padding-inline: 16px; white-space: nowrap; }
 .nav-dock { position: relative; display: flex; flex: none; align-items: center; gap: 2px; padding: 5px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface-soft); }
 .nav-dock a { position: relative; z-index: 1; display: inline-flex; align-items: center; min-height: 40px; padding: 9px 13px; font-size: 13px; font-weight: 650; white-space: nowrap; border-radius: 12px; transition: color 160ms ease; }
@@ -174,6 +175,13 @@ select { padding-right: 28px; }
 .contact-card .contact-label { margin-top: 5px; }
 .big-phone.second { margin-top: 18px; font-size: 1.25rem; }
 .instagram-link { margin-top: 18px; font-size: .85rem; }
+.gis-link { font-size: .85rem; }
+.contact-card .text-link { display: flex; width: fit-content; }
+.not-found { display: grid; justify-items: center; align-content: center; gap: 8px; min-height: 100dvh; padding: 32px 20px; text-align: center; }
+.not-found img { width: 158px; height: 60px; object-fit: contain; margin-bottom: 28px; }
+.not-found h1 { margin: 0; font-size: clamp(2rem, 6vw, 3.4rem); line-height: 1.1; letter-spacing: -.05em; }
+.not-found p { margin: 0; color: var(--muted); }
+.not-found-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 28px; }
 .map-shell { position: relative; min-height: 470px; background: #e6e9ed; }
 .map-shell iframe, #api-map { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 .lenis.lenis-smooth .map-shell iframe { pointer-events: auto; }
@@ -279,7 +287,8 @@ dialog > .button { margin-top: 6px; }
   .header-inner { min-height: 76px; padding-inline: 16px; gap: 10px; }
   .brand img { width: 112px; height: 43px; }
   .header-phone { font-size: 12px; }
-  .header-actions { gap: 12px; }
+  .header-actions { gap: 10px; }
+  .lang-switch { min-width: 40px; min-height: 42px; padding: 0 7px; font-size: 11px; }
   .menu-toggle { width: 42px; height: 42px; }
   .nav-dock.open { top: 76px; max-height: calc(100dvh - 76px); padding-inline: 16px; }
   .hero { min-height: 610px; }
@@ -360,7 +369,7 @@ dialog > .button { margin-top: 6px; }
   .footer-links { margin-top: 14px; }
   .footer-bottom { margin-top: 32px; gap: 16px; align-items: flex-start; font-size: .75rem; }
   .footer-bottom > span { flex-basis: 100%; }
-  .footer-bottom > a { margin-left: auto; }
+  .footer-bottom > a:last-child { margin-left: auto; }
   .whatsapp-float { right: 12px; bottom: 12px; width: 48px; height: 48px; }
   dialog { padding: 28px 24px; border-radius: 24px; }
   .dialog-close { top: 14px; right: 14px; width: 40px; height: 40px; }
@@ -375,6 +384,7 @@ dialog > .button { margin-top: 6px; }
   .brand img { width: 98px; height: 40px; }
   .header-actions { gap: 8px; }
   .header-phone { font-size: 11px; }
+  .lang-switch { min-width: 34px; min-height: 38px; padding: 0 5px; font-size: 10px; }
   .menu-toggle { width: 38px; height: 38px; padding: 8px; }
   .hero-actions { align-items: flex-start; flex-direction: column; }
   .hero { min-height: 680px; }
@@ -388,3 +398,7 @@ dialog > .button { margin-top: 6px; }
   :is(.button, .destination, .story, .whatsapp-float, .menu-toggle):hover,
   :is(.button, .destination, .story, .whatsapp-float, .menu-toggle):active { transform: none !important; }
 }
+
+/* Kazakh hero heading has a longer word than the Russian one. */
+@media (max-width: 639px) { html[lang=kk] .hero h1 { font-size: 3.2rem; } }
+@media (max-width: 359px) { html[lang=kk] .hero h1 { font-size: 2.85rem; } }

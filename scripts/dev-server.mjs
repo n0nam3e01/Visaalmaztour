@@ -5,9 +5,10 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { validateLead, sendLead } from '../whatsapp.mjs';
 import { publicConfig } from '../public-config.mjs';
+import { renderKk } from '../i18n/kk.mjs';
 const projectRoot=fileURLToPath(new URL('../',import.meta.url));
 try{process.loadEnvFile(path.join(projectRoot,'.env'));}catch(error){if(error.code!=='ENOENT')throw error;}
-const mime={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.png':'image/png','.jpg':'image/jpeg'};
+const mime={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.png':'image/png','.jpg':'image/jpeg','.webp':'image/webp','.svg':'image/svg+xml','.txt':'text/plain; charset=utf-8','.xml':'application/xml; charset=utf-8'};
 export function createApp({env=process.env,fetcher=fetch,root=projectRoot}={}) {
  const limits=new Map();
  const server=createServer(async(req,res)=>{
@@ -44,7 +45,15 @@ export function createApp({env=process.env,fetcher=fetch,root=projectRoot}={}) {
   let relative;
   try{relative=decodeURIComponent(pathname);}catch{return json(400,{error:'Неверный адрес.'});}
   if(relative==='/')relative='/index.html';
-  if(!/^\/(index\.html|styles\.css|client\.mjs|contact\.mjs|motion\.mjs|assets\/(?:[a-z0-9-]+\.(?:png|jpg)|lenis\.(?:mjs|css)))$/.test(relative))return json(404,{error:'Страница не найдена.'});
+  if(relative==='/kk'){res.writeHead(308,{Location:'/kk/'});return res.end();}
+  if(relative==='/kk/'||relative==='/kk/index.html'){
+   try{
+    const body=renderKk(await readFile(path.join(root,'index.html'),'utf8'));
+    res.writeHead(200,{'Content-Type':mime['.html'],'Cache-Control':'no-cache'});
+    return res.end(req.method==='HEAD'?undefined:body);
+   }catch{return json(404,{error:'Страница не найдена.'});}
+  }
+  if(!/^\/(index\.html|404\.html|robots\.txt|sitemap\.xml|styles\.css|client\.mjs|contact\.mjs|motion\.mjs|assets\/(?:[a-z0-9-]+\.(?:png|jpg|webp|svg)|lenis\.(?:mjs|css)))$/.test(relative))return json(404,{error:'Страница не найдена.'});
   try{
    const body=await readFile(path.join(root,relative.slice(1)));
    res.writeHead(200,{'Content-Type':mime[path.extname(relative)]||'application/octet-stream','Cache-Control':'no-cache'});

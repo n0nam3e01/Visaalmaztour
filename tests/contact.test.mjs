@@ -18,5 +18,10 @@ test('maps API is absent without a key and safely encodes a configured key', () 
  assert.equal(mapsApiUrl(''), null);
  const url = new URL(mapsApiUrl('demo&key'));
  assert.equal(url.searchParams.get('key'), 'demo&key');
- assert.equal(url.searchParams.get('libraries'), 'places');
+ assert.equal(url.searchParams.get('libraries'), null);
+});
+test('Kazakh consultation uses Kazakh greeting and the same number', () => {
+ const url = new URL(consultationUrl('АҚШ', 'Менің атым Айгүл.', 'kk'));
+ assert.equal(url.pathname, '/77064060101');
+ assert.match(url.searchParams.get('text'), /^Сәлеметсіз бе! Виза бойынша кеңес алғым келеді: АҚШ\.\nМенің атым Айгүл\.$/);
 });
